@@ -62,6 +62,39 @@
       Browser notifications and alarms may not run when it is closed.</p>
     </section>
 
+    <section class="reminder" id="ringtoneSettings">
+       <h2>🔔 Ringtone settings</h2>
+
+       <label for="ringtone">Choose your ringtone</label>
+       <select id="ringtone">
+       <option value="classic">Classic chime</option>
+       <option value="gentle">Gentle melody</option>
+       <option value="urgent">Urgent reminder</option>
+       </select>
+
+      <label for="ringVolume">Ringtone volume</label>
+      <input id="ringVolume" type="range" min="10" max="100" value="70">
+
+      <label>
+       <input id="ringEnabled" type="checkbox" checked
+        style="width:auto; margin-right:8px">
+        Enable ringtone alerts
+      </label>
+
+      <div class="fields">
+        <button type="button" id="testRingtone" class="secondary">
+           ▶ Test ringtone
+        </button>
+        <button type="button" id="saveRingtone" class="primary">
+           Save settings
+        </button>
+      </div>
+
+     <p class="small" id="ringStatus">
+        Choose a sound and test it before saving.
+     </p>
+    </section>
+
     <section>
       <div class="list-heading">
         <h2>Your tasks</h2>
