@@ -15,7 +15,8 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "My Little Planner";
+    if (payload.notification) return;
+    const title = payload.notification?.title || "My Little Planner";
 
   self.registration.showNotification(title, {
     body: payload.notification?.body || "You have a reminder.",
