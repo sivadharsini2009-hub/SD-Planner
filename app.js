@@ -226,6 +226,52 @@ function playRingtone() {
 }
 
 
+function loadRingtoneControls() {
+  $("ringtone").value = settings.ringtone;
+  $("ringVolume").value = settings.volume;
+  $("ringEnabled").checked = settings.ringEnabled;
+}
+
+$("testRingtone").addEventListener("click", async () => {
+  // A button tap lets the browser authorize audio playback.
+  settings.ringtone = $("ringtone").value;
+  settings.volume = Number($("ringVolume").value);
+  settings.ringEnabled = $("ringEnabled").checked;
+
+  if (!settings.ringEnabled) {
+    $("ringStatus").textContent =
+      "Enable ringtone alerts to test the sound.";
+    return;
+  }
+
+  try {
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioClass) {
+      audioContext ||= new AudioClass();
+      await audioContext.resume();
+    }
+
+    playRingtone();
+    $("ringStatus").textContent = "Ringtone test played.";
+  } catch (error) {
+    $("ringStatus").textContent =
+      "Couldn't play sound. Check your phone's media volume.";
+  }
+});
+
+$("saveRingtone").addEventListener("click", () => {
+  settings.ringtone = $("ringtone").value;
+  settings.volume = Number($("ringVolume").value);
+  settings.ringEnabled = $("ringEnabled").checked;
+
+  save(SETTINGS_KEY, settings);
+  $("ringStatus").textContent = "Your ringtone settings are saved.";
+});
+
+loadRingtoneControls();
+
+
+
 function checkReminders() {
   const now = new Date();
   const today = now.toLocaleDateString("en-CA");
