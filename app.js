@@ -6,7 +6,15 @@ const SETTINGS_KEY = "littlePlannerSettings";
 const ALERTS_KEY = "littlePlannerAlerts";
 
 let tasks = load(STORAGE_KEY, []);
-let settings = load(SETTINGS_KEY, { bedtime: "21:45" });
+
+let settings = {
+  bedtime: "21:45",
+  ringtone: "classic",
+  volume: 70,
+  ringEnabled: true,
+  ...load(SETTINGS_KEY, {})
+};
+
 let alerted = load(ALERTS_KEY, {});
 let audioContext = null;
 let installPrompt = null;
@@ -165,55 +173,58 @@ async function enableNotifications() {
 
 $("enableAlerts").addEventListener("click", enableNotifications);
 
+
 function playRingtone() {
+  if (!settings.ringEnabled) return;
+
   try {
-    const AudioContextClass =
-      window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) return;
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioClass) {
+      $("ringStatus").textContent =
+        "Audio is not supported by this browser.";
+      return;
+    }
 
-    audioContext ||= new AudioContextClass();
-    if (audioContext.state === "suspended") audioContext.resume();
+    audioContext ||= new AudioClass();
 
-    [880, 660, 880, 660].forEach((frequency, index) => {
-      const start = audioContext.currentTime + index * 0.28;
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const melodies = {
+      classic: [880, 660, 880, 660],
+      gentle: [523, 659, 784, 659],
+      urgent: [880, 880, 660, 880, 880, 660]
+    };
+
+    const notes = melodies[settings.ringtone] || melodies.classic;
+    const volume = Math.max(0.01, Math.min(1, settings.volume / 100));
+    const startTime = audioContext.currentTime + 0.05;
+
+    notes.forEach((frequency, index) => {
+      const start = startTime + index * 0.3;
       const oscillator = audioContext.createOscillator();
       const gain = audioContext.createGain();
 
       oscillator.type = "sine";
       oscillator.frequency.value = frequency;
+
       gain.gain.setValueAtTime(0.001, start);
-      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+      gain.gain.linearRampToValueAtTime(volume * 0.18, start + 0.04);
+      gain.gain.setValueAtTime(volume * 0.18, start + 0.12);
+      gain.gain.linearRampToValueAtTime(0.001, start + 0.25);
 
       oscillator.connect(gain);
       gain.connect(audioContext.destination);
+
       oscillator.start(start);
-      oscillator.stop(start + 0.24);
+      oscillator.stop(start + 0.27);
     });
   } catch (error) {
-    console.warn("Sound could not play:", error);
+    console.error("Ringtone playback failed:", error);
   }
 }
 
-function notify(title, body) {
-  playRingtone();
-
-  if ("Notification" in window && Notification.permission === "granted") {
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(registration =>
-        registration.showNotification(title, {
-          body,
-          icon: "icon.svg",
-          tag: title + body
-        })
-      );
-    } else {
-      new Notification(title, { body, icon: "icon.svg" });
-    }
-  } else {
-    alert(title + "\n" + body);
-  }
-}
 
 function checkReminders() {
   const now = new Date();
