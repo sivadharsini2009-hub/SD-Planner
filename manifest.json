@@ -1,0 +1,19 @@
+
+{
+  "name": "My Little Planner",
+  "short_name": "My Planner",
+  "description": "Your personal study and daily task organizer",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffaf7",
+  "theme_color": "#873f58",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

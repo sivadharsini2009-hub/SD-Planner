@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#873f58">
+  <title>My Little Planner</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <p class="eyebrow">YOUR PERSONAL SPACE</p>
+      <h1>My Little Planner ✿</h1>
+      <p id="today"></p>
+      <p class="quote">Small steps still move you forward.</p>
+    </header>
+
+    <section class="summary">
+      <div><strong id="total">0</strong><span>Total</span></div>
+      <div><strong id="pending">0</strong><span>Pending</span></div>
+      <div><strong id="done">0</strong><span>Completed</span></div>
+    </section>
+
+    <form id="taskForm">
+      <label for="taskInput">What do you need to do?</label>
+      <input id="taskInput" required maxlength="200"
+        placeholder="e.g. Complete physics record">
+
+      <div class="fields">
+        <div>
+          <label for="deadline">Deadline</label>
+          <input id="deadline" type="datetime-local">
+        </div>
+        <div>
+          <label for="category">Category</label>
+          <select id="category">
+            <option>College</option>
+            <option>Study</option>
+            <option>Personal</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="primary" type="submit">＋ Add task</button>
+    </form>
+
+    <section class="reminder">
+      <h2>🌙 Bedtime check</h2>
+      <label for="bedtime">Remind me every day at</label>
+      <div class="fields">
+        <input id="bedtime" type="time" value="21:45">
+        <button id="saveBedtime" type="button">Save time</button>
+      </div>
+      <button id="enableAlerts" class="secondary" type="button">
+        Enable notifications
+      </button>
+      <p class="small">Keep this app open for its in-app scheduled reminders.
+      Browser notifications and alarms may not run when it is closed.</p>
+    </section>
+
+    <section>
+      <div class="list-heading">
+        <h2>Your tasks</h2>
+        <select id="filter" aria-label="Filter tasks">
+          <option value="all">All tasks</option>
+          <option value="pending">Unfinished</option>
+          <option value="done">Completed</option>
+        </select>
+      </div>
+      <div id="taskList"></div>
+      <p id="empty" class="empty">No tasks here yet. Add your first one ✨</p>
+    </section>
+
+    <footer>
+      <p>Made for your goals, one day at a time ♡</p>
+      <button id="installApp" class="secondary" hidden>
+        Install app
+      </button>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
