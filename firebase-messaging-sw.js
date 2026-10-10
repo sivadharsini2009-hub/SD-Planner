@@ -7,12 +7,12 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyDluixmi062HB7SrUlj_NanuhgHbp9fon4",
   authDomain: "my-planner-7dfe9.firebaseapp.com",
   projectId: "my-planner-7dfe9",
   storageBucket: "my-planner-7dfe9.firebasestorage.app",
   messagingSenderId: "304198967880",
-  appId: "YOUR_APP_ID"
+  appId: "1:304198967880:web:02bf38a32b1c398ac12e7d"
 });
 
 const messaging = firebase.messaging();
