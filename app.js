@@ -172,28 +172,85 @@ $("saveBedtime").addEventListener("click", () => {
     "Bedtime saved: " + settings.bedtime;
 });
 
-// Enable browser notifications
+// Firebase Messaging setup
+const firebaseConfig = {
+  apiKey: "AIzaSyDluixmi062HB7SrUlj_NanuhgHbp9fon4",
+  authDomain: "my-planner-7dfe9.firebaseapp.com",
+  projectId: "my-planner-7dfe9",
+  storageBucket: "my-planner-7dfe9.firebasestorage.app",
+  messagingSenderId: "304198967880",
+  appId: "1:304198967880:web:02bf38a32b1c398ac12e7d"
+};
+
+const VAPID_PUBLIC_KEY = "BMpas-hI6GHy80DdmLdD75AgLjBRHOep-upmjFp2pObzHwNbQqIIvtGeC5OIQxOEe8nUg0itHcg7xL43UmU8hwk";
+
+let firebaseMessaging = null;
+
+try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  firebaseMessaging = firebase.messaging();
+} catch (error) {
+  console.error("Firebase setup failed:", error);
+}
+
+// Enable browser notifications and register the existing service worker
 async function enableNotifications() {
-  if (!("Notification" in window)) {
-    alert("Notifications are not supported in this browser.");
+  if (!("Notification" in window) ||
+      !("serviceWorker" in navigator)) {
+    alert("This browser does not support web push notifications.");
     return;
   }
 
   try {
     const permission = await Notification.requestPermission();
 
-    if (permission === "granted") {
-      alert("Notifications enabled!");
-    } else {
+    if (permission !== "granted") {
       alert("Please allow notifications in your browser settings.");
+      return;
     }
-  } catch {
-    alert("Could not enable notifications.");
+
+    if (!firebaseMessaging) {
+      throw new Error("Firebase Messaging did not initialize.");
+    }
+
+    const registration = await navigator.serviceWorker.register("./sw.js");
+    await navigator.serviceWorker.ready;
+
+    const token = await firebaseMessaging.getToken({
+      vapidKey: VAPID_PUBLIC_KEY,
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) {
+      throw new Error("No push token was returned.");
+    }
+
+    // Save this device's token locally for now.
+    // Do not share it publicly.
+    save("littlePlannerFcmToken", token);
+
+    $("ringStatus").textContent =
+      "Push notifications enabled on this device.";
+
+    alert("Notifications enabled! Your device is registered.");
+    console.log("Firebase Messaging token obtained.");
+  } catch (error) {
+    console.error("Notification setup failed:", error);
+
+    $("ringStatus").textContent =
+      "Notification setup failed. Check the browser console.";
+
+    alert(
+      "Couldn't connect notifications. Check your internet connection " +
+      "and Firebase settings, then try again."
+    );
   }
 }
 
 $("enableAlerts").addEventListener("click", enableNotifications);
-
 // Ringtone player
 function playRingtone() {
   if (!settings.ringEnabled) return;
