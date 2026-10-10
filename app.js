@@ -231,7 +231,7 @@ async function enableNotifications() {
     // Save this device's token locally for now.
     // Do not share it publicly.
     save("littlePlannerFcmToken", token);
-    prompt("Copy your FCM token for testing. Keep it private:",token):
+    prompt("Copy your FCM token for testing. Keep it private:", token):
 
     $("ringStatus").textContent =
       "Push notifications enabled on this device.";
